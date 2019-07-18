@@ -1,0 +1,29 @@
+server:
+  port: 8999
+
+spring:
+  application:
+    name: seer
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/seer-main?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+      pool-name: DatebookHikariCP
+
+seer:
+    rpc:
+      ip: 127.0.0.1
+      port: 9992
+# Logger Config
+logging:
+  level:
+    com.seer.operation.rpcClient: off

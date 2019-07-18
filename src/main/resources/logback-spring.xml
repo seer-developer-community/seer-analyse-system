@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true" scanPeriod="30 seconds">
+    <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+    <property name="LOG_HOME" value="${user.home}/logs"/>
+    <springProperty  name="APP_NAME" source="spring.application.name"/>
+
+    <property name="MAX_FILE_SIZE" value="100MB"/>
+    <property name="QUEUE_SIZE" value="2048"/>
+    <property name="INCLUDE_CALLER_DATA" value="false"/>
+    <property name="MAX_HISTORY" value="30"/>
+    <property name="immediateFlush" value="true"/>
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}@%level@%thread@%logger{50}@%M:%L@%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file-appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>${LOG_HOME}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--日志文件保留天数-->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <!-- 追加方式记录日志 -->
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}@%level@%thread@%logger{50}@%M:%L@%msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 时间滚动输出error 异步日志 -->
+    <appender name="file-appender-async" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢弃日志，如果队列的80%已满，则丢弃TRACE,DEBUG,INFO日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列深度，默认为256 -->
+        <queueSize>${QUEUE_SIZE}</queueSize>
+        <appender-ref ref="file-appender"/>
+    </appender>
+
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="file-appender-async"/>
+        </root>
+        <logger name="com.seer" level="INFO"  additivity="false">
+            <appender-ref ref="file-appender-async"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="test">
+        <root level="WARN">
+            <appender-ref ref="file-appender-async"/>
+        </root>
+        <logger name="com.seer" level="INFO"  additivity="false">
+            <appender-ref ref="file-appender-async"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="dev">
+        <root level="WARN">
+            <appender-ref ref="STDOUT"/>
+        </root>
+        <logger name="com.seer" level="INFO"  additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+    </springProfile>
+
+</configuration>
