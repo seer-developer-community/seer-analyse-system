@@ -173,8 +173,13 @@ public class SeerJsonRpcClient implements SeerRpcClient {
     public GetGlobal getGlobal() {
         Object object = query("get_global_properties", "");
         String jsonString = JSONObject.toJSONString(object);
+        logger.info("global:" + jsonString);
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
-        return JSONObject.toJavaObject(jsonObject, GetGlobal.class);
+        try {
+            return JSONObject.toJavaObject(jsonObject, GetGlobal.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override

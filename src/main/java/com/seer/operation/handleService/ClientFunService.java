@@ -107,10 +107,13 @@ public class ClientFunService {
     public BigDecimal getCreateRoomFee() {
         SeerJsonRpcClient client = new SeerJsonRpcClient(rpcIp, rpcPort);
         GetGlobal getGlobal = client.getGlobal();
-        JSONObject object = getGlobal.getParameters().getCurrentFees();
-        JSONArray parameters = object.getJSONArray("parameters");
-        BigDecimal fee = parameters.getJSONArray(43).getJSONObject(1).getBigDecimal("fee");
-        fee = fee.divide(SEER_DECIMALS).setScale(5);
-        return fee;
+        if (null != getGlobal) {
+            JSONObject object = getGlobal.getParameters().getCurrentFees();
+            JSONArray parameters = object.getJSONArray("parameters");
+            BigDecimal fee = parameters.getJSONArray(43).getJSONObject(1).getBigDecimal("fee");
+            fee = fee.divide(SEER_DECIMALS).setScale(5);
+            return fee;
+        }
+        return BigDecimal.ONE;
     }
 }

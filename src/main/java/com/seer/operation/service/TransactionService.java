@@ -101,4 +101,24 @@ public class TransactionService {
         wrapper.orderByAsc(TransactionPo::getBlockHeight);
         return transactionMapper.selectList(wrapper);
     }
+
+    public List<TransactionPo> selectRecords(Integer limit, String code) {
+        LambdaQueryWrapper<TransactionPo> wrapper = new QueryWrapper<TransactionPo>().lambda();
+        wrapper.orderByDesc(TransactionPo::getId);
+        wrapper.last("limit " + limit);
+        if (StringUtils.isNotBlank(code)) {
+            if (code.contains(",")) {
+                String[] eq = code.split(",");
+                for (String a : eq) {
+                    wrapper.eq(TransactionPo::getType,a).or();
+                }
+            } else if (code.contains("-")) {
+                String[] eq = code.split("-");
+                wrapper.between(TransactionPo::getType, eq[0], eq[1]);
+            } else {
+                wrapper.eq(TransactionPo::getType, code);
+            }
+        }
+        return transactionMapper.selectList(wrapper);
+    }
 }
