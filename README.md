@@ -24,12 +24,20 @@ source /etc/profile
 
 ## 1.下载release的v1.0版本的压缩包 operation-distribution.zip
 
-解压缩后运行
+解压缩后，进入解压后的目录运行
 
 ```
-./bin/start.sh >> run.log 2>&1 &
+./bin/startup.sh >> run.log 2>&1 &
 ```
 
+成功的话会提示：
+
+```
+(base) ubuntu@ip-172-131-43-119:~/operation$ ./bin/startup.sh >> run.log 2>&1 &
+[1] 3174
+(base) ubuntu@ip-172-131-43-119:~/operation$ 
+[1]+  Done                    ./bin/startup.sh >> run.log 2>&1
+```
 ## 2.查看日志
 
 每天会生成一个日志文件
